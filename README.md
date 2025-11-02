@@ -104,9 +104,11 @@ bash /home/sultan/signage/executor/play_kiosk.sh
 ```
 4. play all dengan mode dari config.json
 
+```py
+# membuat file json untuk perubahan mode player
+nano /home/sultan/signage/config/config.json
+```
 ```json
-//membuat file json untuk perubahan mode player
-//nano /home/sultan/signage/config/config.json
 {
   "mode": "web",
   "web_url": "https://daftar.rsudsulfat.id/admin/bed_kosong/tv"
