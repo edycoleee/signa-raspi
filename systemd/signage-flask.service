@@ -1,0 +1,14 @@
+[Unit]
+Description=Flask Web Server for Signage Control
+After=network.target
+
+[Service]
+User=sultan
+WorkingDirectory=/home/sultan/signage/control
+Environment="PATH=/home/sultan/signage/signage-venv/bin"
+ExecStart=/home/sultan/signage/signage-venv/bin/python signage_control.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

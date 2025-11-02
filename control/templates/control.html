@@ -1,0 +1,259 @@
+<!-- nano /home/sultan/signage/control.templates/control.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Signage Control Panel</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+      margin: 0;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    button,
+    input[type=submit] {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover,
+    input[type=submit]:hover {
+      opacity: 0.9;
+    }
+
+    input[type=text] {
+      padding: 8px;
+      width: 70%;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    input[type=file] {
+      padding: 8px;
+      margin: 10px 0;
+    }
+
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .mode-buttons {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .mode-buttons button {
+      margin: 5px;
+      min-width: 120px;
+    }
+
+    .video-mode {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .slide-mode {
+      background: #4ecdc4;
+      color: white;
+    }
+
+    .web-mode {
+      background: #45b7d1;
+      color: white;
+    }
+
+    .status-btn {
+      background: #95e1d3;
+      color: black;
+    }
+
+    .restart-btn {
+      background: #fce38a;
+      color: black;
+    }
+
+    .upload-btn {
+      background: #eaffd0;
+      color: black;
+    }
+
+    .delete-btn {
+      background: #ff9999;
+      color: white;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 8px;
+      margin: 5px 0;
+      background: #f8f9fa;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .current-mode {
+      background: #e3f2fd;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🎛️ Signage Control Panel</h1>
+
+  <!-- Mode Control Buttons -->
+  <div class="section">
+    <div class="mode-buttons">
+      <form method="post" style="display: inline;">
+        <button type="submit" name="action" value="status" class="status-btn">🔍 Get Status</button>
+        <button type="submit" name="action" value="video" class="video-mode">🎞️ Video Mode</button>
+        <button type="submit" name="action" value="slide" class="slide-mode">🖼️ Slide Mode</button>
+        <button type="submit" name="action" value="web" class="web-mode">🌐 Web Mode</button>
+        <button type="submit" name="action" value="restart" class="restart-btn">🔁 Restart Service</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Current Configuration -->
+  <div class="section">
+    <h3>🌐 Current Configuration</h3>
+    <div class="current-mode">
+      📱 Current Mode: <span style="color: #2e86ab;">{{ config_data.mode | upper }}</span>
+    </div>
+    <p><strong>🌐 Web URL:</strong>
+      <a href="{{ config_data.web_url }}" target="_blank">{{ config_data.web_url }}</a>
+    </p>
+  </div>
+
+  <!-- JSON Configuration Display -->
+  <div class="section">
+    <h2>🧾 Full JSON Configuration</h2>
+    <pre style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid #ccc; overflow-x: auto;">
+{{ config_data | tojson(indent=2) }}
+    </pre>
+  </div>
+
+  <!-- Update Web URL -->
+  <div class="section">
+    <h2>⚙️ Update Web URL</h2>
+    <form method="post">
+      <label><strong>🔧 New Web URL:</strong></label><br>
+      <input type="text" name="new_web_url" value="{{ config_data.web_url }}" placeholder="https://example.com"
+        required>
+      <input type="submit" name="update_web_url" value="💾 Update URL" class="upload-btn">
+    </form>
+  </div>
+
+  <!-- Upload PPTX -->
+  <div class="section">
+    <h2>📤 Upload Slide Presentation</h2>
+    <form method="post" enctype="multipart/form-data">
+      <label><strong>Select PPTX File:</strong></label><br>
+      <input type="file" name="pptx_file" accept=".pptx" required>
+      <br>
+      <input type="submit" name="upload" value="📤 Upload Slide" class="upload-btn">
+    </form>
+  </div>
+
+  <!-- Upload Video -->
+  <div class="section">
+    <h2>📥 Upload Video Content</h2>
+    <form method="post" enctype="multipart/form-data">
+      <label><strong>Select Video File (MP4 & JPG):</strong></label><br>
+      <input type="file" name="video_file" required>
+      <br>
+      <input type="submit" name="upload" value="🎬 Upload Video" class="upload-btn">
+    </form>
+  </div>
+
+  <!-- Video Files List -->
+  <div class="section">
+    <h2>🎞️ Available Video Files</h2>
+    {% if video_files %}
+    <ul>
+      {% for file in video_files %}
+      <li>
+        <span>🎥 {{ file }}</span>
+        <div class="file-actions">
+          <a href="/files/video/{{ file }}" target="_blank" style="color: #2e86ab;">👁️ Preview</a>
+          <form method="post" style="display:inline; margin:0;">
+            <input type="hidden" name="delete_video" value="{{ file }}">
+            <input type="submit" value="🗑️ Delete" class="delete-btn" onclick="return confirm('Delete {{ file }}?')">
+          </form>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p><em>No video files found.</em></p>
+    {% endif %}
+  </div>
+
+  <!-- Slide Preview -->
+  <div class="section">
+    <h2>🖼️ Current Slide Preview</h2>
+    {% if slide_image %}
+    <p><strong>Current Slide:</strong> {{ slide_image }}</p>
+    <img src="/files/slide/{{ slide_image }}"
+      style="max-width:100%; border:1px solid #ccc; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+    {% else %}
+    <p><em>No slide image found. Upload a PPTX file to generate slides.</em></p>
+    {% endif %}
+  </div>
+
+  <!-- Output Messages -->
+  {% if output %}
+  <div class="section output">
+    <strong>📋 System Output:</strong><br>{{ output }}
+  </div>
+  {% endif %}
+</body>
+
+</html>

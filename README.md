@@ -306,11 +306,10 @@ git commit -m "finish"          # Commit dengan pesan "finish"
 git push -u origin 02_flask_control  # Push ke remote dan set tracking branch
 ```
 ```py
-
+#sudo nano /home/sultan/signage/control/signage_control.py
 ```
-
 ```html
-
+<!-- nano /home/sultan/signage/control.templates/control.html -->
 ```
 ### FLASK - CONTROL - SHUTDOWN
 
