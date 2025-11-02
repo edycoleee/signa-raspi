@@ -435,3 +435,28 @@ nano /home/sultan/signage/config/users.json
 ```html
 <!-- nano /home/sultan/signage/control.templates/control.html -->
 ```
+
+### CATATAN
+```git
+git clone -b 04_flask_user https://github.com/edycoleee/signa-raspi.git signage
+
+#PELAJARAN TENTANG KEPEMILIKAN FILE
+user file >> sudo file
+# 1. Buat dan edit file awal tanpa sudo
+nano /home/sultan/my_script.sh
+
+# 2. Ubah kepemilikan ke root (membutuhkan sudo untuk eksekusi perintah ini)
+sudo chown root:root /home/sultan/my_script.sh
+
+# 3. Beri izin eksekusi
+sudo chmod +x /home/sultan/my_script.sh
+
+sudo file >> user file
+sudo chown sultan:sultan /home/sultan/my_script.sh
+
+Use code with caution.
+Penjelasan:
+•	sudo: Menjalankan perintah sebagai superuser (root).
+•	chown: Perintah untuk mengubah pemilik file (change owner).
+•	sultan:sultan: Mengatur pemilik (sultan) dan grup (sultan) kembali ke nama pengguna Anda. Sesuaikan sultan jika nama pengguna Anda berbeda.
+```
