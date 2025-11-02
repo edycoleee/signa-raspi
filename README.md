@@ -236,6 +236,19 @@ git add .                       # Menambahkan semua perubahan ke staging area
 git commit -m "finish"          # Commit dengan pesan "finish"
 git push -u origin 01_flask_dasar  # Push ke remote dan set tracking branch
 ```
+```text
+INSTALL RUST DESK
+wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
+
+lanjut install rustdesk dari pi apps >> internet >> rust desk
+setting password Sulfat123#! 
+setting jaringan >> relay
+SETTING MANUAL
+ID SERVER : rust.rsudsulfat.id
+RELAY SERVER : rust.rsudsulfat.id
+KEY : ========pdf
+
+```
 ```py
 # login dg ssh
 sultan@raspberrypi:~ $ cd signage
@@ -284,7 +297,21 @@ hostname -I
 
 
 ### FLASK - CONTROL
+```git
+git branch 02_flask_control         # Membuat branch baru
+git checkout 02_flask_control        # Berpindah ke branch tersebut
+# (lakukan perubahan pada file sesuai kebutuhan)
+git add .                       # Menambahkan semua perubahan ke staging area
+git commit -m "finish"          # Commit dengan pesan "finish"
+git push -u origin 02_flask_control  # Push ke remote dan set tracking branch
+```
+```py
 
+```
+
+```html
+
+```
 ### FLASK - CONTROL - SHUTDOWN
 
 ### FLASK - CONTROL - SHUTDOWN - USER ROLE
