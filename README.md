@@ -359,3 +359,36 @@ File template HTML tetap sama seperti sebelumnya
 ```
 
 ### FLASK - CONTROL - SHUTDOWN - USER ROLE
+```git
+git branch 04_flask_user        # Membuat branch baru
+git checkout 04_flask_user         # Berpindah ke branch tersebut
+# (lakukan perubahan pada file sesuai kebutuhan)
+git add .                       # Menambahkan semua perubahan ke staging area
+git commit -m "finish"          # Commit dengan pesan "finish"
+git push -u origin 04_flask_user   # Push ke remote dan set tracking branch
+```
+nano /home/sultan/signage/config/users.json
+```json
+{
+  "users": {
+    "admin": {
+      "password": "admin",
+      "role": "admin"
+    },
+    "user": {
+      "password": "user",
+      "role": "user"
+    }
+  }
+}
+```
+
+```html
+<!-- nano /home/sultan/signage/control/templates/login.html -->
+```
+```py
+#sudo nano /home/sultan/signage/control/signage_control.py
+```
+```html
+<!-- nano /home/sultan/signage/control.templates/control.html -->
+```

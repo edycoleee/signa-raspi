@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, session, redirect, url_for
 import subprocess
 import os
 import json
 import sys
+from functools import wraps
 
 # =============================
 # KONFIGURASI PATH IMPORT
@@ -18,6 +19,7 @@ sys.path.append(project_root)
 from utils.logger import log
 
 app = Flask(__name__)
+app.secret_key = 'signage_control_panel_secret_key_2024'  # Ganti dengan secret key yang kuat
 
 # =============================
 # KONFIGURASI PATH
@@ -26,12 +28,73 @@ app.config['UPLOAD_FOLDER_PPTX'] = '/home/sultan/signage/media'
 app.config['UPLOAD_FOLDER_VIDEO'] = '/home/sultan/signage/media/video'
 app.config['SLIDE_OUTPUT'] = '/home/sultan/signage/media/slide_output'
 app.config['MODE_FILE'] = '/home/sultan/signage/config/config.json'
+app.config['USERS_FILE'] = os.path.join(project_root, 'config', 'users.json')
 
 # =============================
 # KONFIGURASI TEMPLATE FOLDER
 # =============================
 # Atur template folder ke direktori templates di root
 app.template_folder = os.path.join(project_root, 'templates')
+
+# =============================
+# FUNGSI AUTHENTIKASI
+# =============================
+
+def load_users():
+    """Memuat data user dari file JSON"""
+    try:
+        with open(app.config['USERS_FILE'], 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Buat file users default jika tidak ada
+        default_users = {
+            "users": {
+                "admin": {
+                    "password": "raspberry",
+                    "role": "admin"
+                },
+                "user": {
+                    "password": "signage",
+                    "role": "user"
+                }
+            }
+        }
+        os.makedirs(os.path.dirname(app.config['USERS_FILE']), exist_ok=True)
+        with open(app.config['USERS_FILE'], 'w') as f:
+            json.dump(default_users, f, indent=2)
+        return default_users
+    except Exception as e:
+        log("ERROR", f"Error loading users: {e}")
+        return {"users": {}}
+
+def authenticate_user(username, password):
+    """Autentikasi user"""
+    users_data = load_users()
+    users = users_data.get('users', {})
+    
+    if username in users and users[username]['password'] == password:
+        return users[username]
+    return None
+
+def login_required(f):
+    """Decorator untuk memerlukan login"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    """Decorator untuk memerlukan role admin"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        if session.get('role') != 'admin':
+            return "❌ Access denied. Admin privileges required.", 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 # =============================
 # FUNGSI UTILITAS
@@ -90,18 +153,86 @@ def ensure_directories():
         app.config['UPLOAD_FOLDER_PPTX'],
         app.config['UPLOAD_FOLDER_VIDEO'],
         app.config['SLIDE_OUTPUT'],
-        os.path.dirname(app.config['MODE_FILE'])
+        os.path.dirname(app.config['MODE_FILE']),
+        os.path.dirname(app.config['USERS_FILE'])
     ]
     
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
         log("SYSTEM", f"Directory ensured: {directory}")
 
+def execute_system_command(command, action_name):
+    """
+    Eksekusi perintah system dengan error handling.
+    
+    Args:
+        command (list): Perintah system yang akan dijalankan
+        action_name (str): Nama aksi untuk logging
+        
+    Returns:
+        tuple: (success, output_message)
+    """
+    try:
+        result = subprocess.run(
+            command,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        log("SYSTEM", f"{action_name} command executed successfully by {session.get('username', 'unknown')}")
+        return True, f"✅ {action_name} initiated successfully"
+    except subprocess.CalledProcessError as e:
+        error_msg = f"❌ {action_name} failed: {e.stderr.strip() if e.stderr else str(e)}"
+        log("ERROR", f"{action_name} failed: {e.stderr.strip() if e.stderr else str(e)}")
+        return False, error_msg
+    except Exception as e:
+        error_msg = f"❌ Unexpected error during {action_name}: {str(e)}"
+        log("ERROR", f"Unexpected error during {action_name}: {str(e)}")
+        return False, error_msg
+
+# =============================
+# ROUTES AUTHENTIKASI
+# =============================
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Route untuk login"""
+    # Jika sudah login, redirect ke control panel
+    if 'username' in session:
+        return redirect(url_for('control_panel'))
+    
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        
+        user = authenticate_user(username, password)
+        if user:
+            session['username'] = username
+            session['role'] = user['role']
+            log("AUTH", f"User {username} logged in successfully")
+            return redirect(url_for('control_panel'))
+        else:
+            error = "Invalid username or password"
+            log("AUTH", f"Failed login attempt for user: {username}")
+    
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    """Route untuk logout"""
+    username = session.get('username', 'unknown')
+    session.clear()
+    log("AUTH", f"User {username} logged out")
+    return redirect(url_for('login'))
+
 # =============================
 # ROUTE UTAMA
 # =============================
 
 @app.route("/", methods=["GET", "POST"])
+@login_required
 def control_panel():
     """
     Route utama untuk control panel signage.
@@ -138,7 +269,7 @@ def control_panel():
             
             # 🔍 Get Service Status
             if action == "status":
-                log("ACTION", "User requested service status")
+                log("ACTION", f"User {session['username']} requested service status")
                 output = subprocess.check_output(
                     ["/usr/bin/systemctl", "status", "signage-auto.service"], 
                     stderr=subprocess.STDOUT
@@ -150,31 +281,63 @@ def control_panel():
                 config["mode"] = "video"
                 save_config(config)
                 output = "✅ Mode changed to: VIDEO"
-                log("MODE", "Switched to VIDEO mode")
+                log("MODE", f"User {session['username']} switched to VIDEO mode")
             
             # 🖼️ Set Slide Mode
             elif action == "slide":
                 config["mode"] = "slide"
                 save_config(config)
                 output = "✅ Mode changed to: SLIDE"
-                log("MODE", "Switched to SLIDE mode")
+                log("MODE", f"User {session['username']} switched to SLIDE mode")
             
             # 🌐 Set Web Mode
             elif action == "web":
                 config["mode"] = "web"
                 save_config(config)
                 output = "✅ Mode changed to: WEB"
-                log("MODE", "Switched to WEB mode")
+                log("MODE", f"User {session['username']} switched to WEB mode")
             
             # 🔁 Restart Service
             elif action == "restart":
-                log("ACTION", "User requested service restart")
+                log("ACTION", f"User {session['username']} requested service restart")
                 subprocess.run(
                     ["/usr/bin/sudo", "/usr/bin/systemctl", "restart", "signage-auto.service"], 
                     check=True
                 )
                 output = "✅ Service restarted successfully"
                 log("SYSTEM", "Service restarted successfully")
+            
+            # 🔄 Reboot System (Admin only)
+            elif action == "reboot":
+                if session.get('role') != 'admin':
+                    output = "❌ Access denied. Admin privileges required for reboot."
+                    log("SECURITY", f"User {session['username']} attempted reboot without admin privileges")
+                else:
+                    log("ACTION", f"User {session['username']} initiated system reboot")
+                    success, message = execute_system_command(
+                        ["/usr/bin/sudo", "/sbin/reboot"],
+                        "System reboot"
+                    )
+                    output = message
+                    if success:
+                        output += "\n\n🔄 System will reboot in a few seconds..."
+                        output += "\n📱 Please wait 1-2 minutes for the system to come back online."
+            
+            # ⭕ Shutdown System (Admin only)
+            elif action == "shutdown":
+                if session.get('role') != 'admin':
+                    output = "❌ Access denied. Admin privileges required for shutdown."
+                    log("SECURITY", f"User {session['username']} attempted shutdown without admin privileges")
+                else:
+                    log("ACTION", f"User {session['username']} initiated system shutdown")
+                    success, message = execute_system_command(
+                        ["/usr/bin/sudo", "/sbin/shutdown", "-h", "now"],
+                        "System shutdown"
+                    )
+                    output = message
+                    if success:
+                        output += "\n\n🔴 System is shutting down..."
+                        output += "\n⚡ You will need to manually power on the Raspberry Pi to restart it."
             
             # 📤 Upload Files
             elif "upload" in request.form:
@@ -185,10 +348,10 @@ def control_panel():
                         filepath = os.path.join(app.config['UPLOAD_FOLDER_PPTX'], "slide.pptx")
                         file.save(filepath)
                         output = f"✅ Slide uploaded: {file.filename}"
-                        log("UPLOAD", f"PPTX file uploaded: {file.filename}")
+                        log("UPLOAD", f"User {session['username']} uploaded PPTX: {file.filename}")
                     else:
                         output = "❌ Error: Only .pptx files are allowed"
-                        log("ERROR", f"Invalid file type attempted: {file.filename}")
+                        log("ERROR", f"User {session['username']} attempted invalid file type: {file.filename}")
                 
                 # Upload Video File
                 elif "video_file" in request.files and request.files["video_file"].filename:
@@ -197,10 +360,10 @@ def control_panel():
                         filepath = os.path.join(app.config['UPLOAD_FOLDER_VIDEO'], file.filename)
                         file.save(filepath)
                         output = f"✅ Video uploaded: {file.filename}"
-                        log("UPLOAD", f"Video file uploaded: {file.filename}")
+                        log("UPLOAD", f"User {session['username']} uploaded video: {file.filename}")
                     else:
                         output = "❌ Error: Only video files (MP4, AVI, MOV, MKV) and images (JPG, JPEG) are allowed"
-                        log("ERROR", f"Invalid file type attempted: {file.filename}")
+                        log("ERROR", f"User {session['username']} attempted invalid file type: {file.filename}")
             
             # 🗑️ Delete Video File
             elif "delete_video" in request.form:
@@ -209,10 +372,10 @@ def control_panel():
                 if os.path.exists(filepath):
                     os.remove(filepath)
                     output = f"✅ Video deleted: {filename}"
-                    log("DELETE", f"File deleted: {filename}")
+                    log("DELETE", f"User {session['username']} deleted file: {filename}")
                 else:
                     output = f"❌ File not found: {filename}"
-                    log("ERROR", f"File not found for deletion: {filename}")
+                    log("ERROR", f"User {session['username']} attempted to delete non-existent file: {filename}")
             
             # 🔧 Update Web URL
             elif "update_web_url" in request.form:
@@ -222,10 +385,10 @@ def control_panel():
                     config["web_url"] = new_url
                     save_config(config)
                     output = f"✅ Web URL updated to: {new_url}"
-                    log("CONFIG", f"Web URL changed from {old_url} to {new_url}")
+                    log("CONFIG", f"User {session['username']} changed Web URL from {old_url} to {new_url}")
                 else:
                     output = "❌ Error: Please enter a valid URL starting with http:// or https://"
-                    log("ERROR", f"Invalid URL entered: {new_url}")
+                    log("ERROR", f"User {session['username']} entered invalid URL: {new_url}")
         
         except subprocess.CalledProcessError as e:
             output = f"❌ Command error: {str(e)}"
@@ -235,7 +398,7 @@ def control_panel():
             log("ERROR", f"Unexpected error: {str(e)}")
     
     # Log akses ke halaman
-    log("ACCESS", "Control panel accessed")
+    log("ACCESS", f"Control panel accessed by {session['username']}")
     
     # Render template dengan data yang diperlukan
     return render_template(
@@ -243,7 +406,9 @@ def control_panel():
         output=output,
         video_files=video_files,
         slide_image=slide_image,
-        config_data=config
+        config_data=config,
+        username=session.get('username'),
+        role=session.get('role')
     )
 
 # =============================
@@ -251,6 +416,7 @@ def control_panel():
 # =============================
 
 @app.route("/files/video/<path:filename>")
+@login_required
 def serve_video(filename):
     """
     Route untuk melayani file video.
@@ -261,10 +427,11 @@ def serve_video(filename):
     Returns:
         Response: File video
     """
-    log("ACCESS", f"Video file served: {filename}")
+    log("ACCESS", f"Video file served to {session['username']}: {filename}")
     return send_from_directory(app.config['UPLOAD_FOLDER_VIDEO'], filename)
 
 @app.route("/files/slide/<path:filename>")
+@login_required
 def serve_slide(filename):
     """
     Route untuk melayani file slide/gambar.
@@ -275,7 +442,7 @@ def serve_slide(filename):
     Returns:
         Response: File gambar slide
     """
-    log("ACCESS", f"Slide file served: {filename}")
+    log("ACCESS", f"Slide file served to {session['username']}: {filename}")
     return send_from_directory(app.config['SLIDE_OUTPUT'], filename)
 
 # =============================
@@ -310,6 +477,7 @@ if __name__ == "__main__":
     print(f"   - Video Upload: {app.config['UPLOAD_FOLDER_VIDEO']}")
     print(f"   - Slide Output: {app.config['SLIDE_OUTPUT']}")
     print(f"   - Config File: {app.config['MODE_FILE']}")
+    print(f"   - Users File: {app.config['USERS_FILE']}")
     print(f"   - Log File: /home/sultan/signage/logs/signage.log")
     
     # Pastikan direktori ada saat startup
@@ -318,6 +486,10 @@ if __name__ == "__main__":
     # Muat konfigurasi awal
     initial_config = load_config()
     print(f"📋 Initial config: {initial_config}")
+    
+    # Muat users
+    users = load_users()
+    print(f"👥 Loaded {len(users.get('users', {}))} users")
     
     # Jalankan aplikasi
     print("🌐 Server running on http://0.0.0.0:5000")

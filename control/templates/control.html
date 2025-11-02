@@ -1,123 +1,121 @@
-<!-- nano /home/sultan/signage/control.templates/control.html -->
+<!-- nano /home/sultan/signage/control/templates/control.html -->
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Signage Control Panel</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f4f4f4;
-      padding: 40px;
+    body { 
+      font-family: sans-serif; 
+      background: #f4f4f4; 
+      padding: 40px; 
       margin: 0;
     }
-
-    h1 {
-      color: #333;
+    h1 { 
+      color: #333; 
       text-align: center;
       margin-bottom: 30px;
     }
-
-    button,
-    input[type=submit] {
-      padding: 10px 20px;
-      margin: 5px;
-      font-size: 16px;
+    button, input[type=submit] { 
+      padding: 10px 20px; 
+      margin: 5px; 
+      font-size: 16px; 
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s;
     }
-
-    button:hover,
-    input[type=submit]:hover {
+    button:hover, input[type=submit]:hover {
       opacity: 0.9;
     }
-
-    input[type=text] {
-      padding: 8px;
-      width: 70%;
-      font-size: 16px;
+    input[type=text] { 
+      padding: 8px; 
+      width: 70%; 
+      font-size: 16px; 
       border: 1px solid #ddd;
       border-radius: 4px;
     }
-
     input[type=file] {
       padding: 8px;
       margin: 10px 0;
     }
-
-    .output {
-      margin-top: 20px;
-      padding: 15px;
-      background: #fff;
-      border: 1px solid #ccc;
+    .output { 
+      margin-top: 20px; 
+      padding: 15px; 
+      background: #fff; 
+      border: 1px solid #ccc; 
       white-space: pre-wrap;
       border-radius: 5px;
       font-family: monospace;
     }
-
-    .section {
-      margin-bottom: 30px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
+    .section { 
+      margin-bottom: 30px; 
+      background: #fff; 
+      padding: 20px; 
+      border-radius: 8px; 
       border: 1px solid #ddd;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
     .mode-buttons {
       text-align: center;
       margin: 20px 0;
     }
-
     .mode-buttons button {
       margin: 5px;
       min-width: 120px;
     }
-
-    .video-mode {
-      background: #ff6b6b;
-      color: white;
+    .video-mode { background: #ff6b6b; color: white; }
+    .slide-mode { background: #4ecdc4; color: white; }
+    .web-mode { background: #45b7d1; color: white; }
+    .status-btn { background: #95e1d3; color: black; }
+    .restart-btn { background: #fce38a; color: black; }
+    .upload-btn { background: #eaffd0; color: black; }
+    .delete-btn { background: #ff9999; color: white; padding: 2px 8px; font-size: 12px; }
+    .shutdown-btn { background: #ff4757; color: white; }
+    .reboot-btn { background: #3742fa; color: white; }
+    .system-buttons {
+      text-align: center;
+      margin: 20px 0;
     }
-
-    .slide-mode {
-      background: #4ecdc4;
-      color: white;
+    .system-buttons button {
+      margin: 10px;
+      min-width: 150px;
+      font-size: 18px;
+      padding: 12px 24px;
     }
-
-    .web-mode {
-      background: #45b7d1;
-      color: white;
+    .warning-section {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
     }
-
-    .status-btn {
-      background: #95e1d3;
-      color: black;
+    .user-info {
+      text-align: center;
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #bbdefb;
     }
-
-    .restart-btn {
-      background: #fce38a;
-      color: black;
+    .user-info a {
+      margin-left: 20px;
+      color: #d32f2f;
+      text-decoration: none;
+      font-weight: bold;
     }
-
-    .upload-btn {
-      background: #eaffd0;
-      color: black;
+    .user-info a:hover {
+      text-decoration: underline;
     }
-
-    .delete-btn {
-      background: #ff9999;
-      color: white;
-      padding: 2px 8px;
-      font-size: 12px;
+    .admin-only {
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      margin: 10px 0;
     }
-
     ul {
       list-style-type: none;
       padding: 0;
     }
-
     li {
       padding: 8px;
       margin: 5px 0;
@@ -127,13 +125,11 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .file-actions {
       display: flex;
       gap: 10px;
       align-items: center;
     }
-
     .current-mode {
       background: #e3f2fd;
       padding: 10px;
@@ -144,9 +140,19 @@
     }
   </style>
 </head>
-
 <body>
   <h1>🎛️ Signage Control Panel</h1>
+
+  <!-- User Info & Logout -->
+  <div class="user-info">
+    <p style="margin: 0;">
+      👤 Logged in as: <strong>{{ username }}</strong> 
+      ({{ role }})
+      <a href="/logout" onclick="return confirm('Are you sure you want to logout?')">
+        🚪 Logout
+      </a>
+    </p>
+  </div>
 
   <!-- Mode Control Buttons -->
   <div class="section">
@@ -185,8 +191,7 @@
     <h2>⚙️ Update Web URL</h2>
     <form method="post">
       <label><strong>🔧 New Web URL:</strong></label><br>
-      <input type="text" name="new_web_url" value="{{ config_data.web_url }}" placeholder="https://example.com"
-        required>
+      <input type="text" name="new_web_url" value="{{ config_data.web_url }}" placeholder="https://example.com" required>
       <input type="submit" name="update_web_url" value="💾 Update URL" class="upload-btn">
     </form>
   </div>
@@ -217,22 +222,22 @@
   <div class="section">
     <h2>🎞️ Available Video Files</h2>
     {% if video_files %}
-    <ul>
-      {% for file in video_files %}
-      <li>
-        <span>🎥 {{ file }}</span>
-        <div class="file-actions">
-          <a href="/files/video/{{ file }}" target="_blank" style="color: #2e86ab;">👁️ Preview</a>
-          <form method="post" style="display:inline; margin:0;">
-            <input type="hidden" name="delete_video" value="{{ file }}">
-            <input type="submit" value="🗑️ Delete" class="delete-btn" onclick="return confirm('Delete {{ file }}?')">
-          </form>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
+      <ul>
+        {% for file in video_files %}
+          <li>
+            <span>🎥 {{ file }}</span>
+            <div class="file-actions">
+              <a href="/files/video/{{ file }}" target="_blank" style="color: #2e86ab;">👁️ Preview</a>
+              <form method="post" style="display:inline; margin:0;">
+                <input type="hidden" name="delete_video" value="{{ file }}">
+                <input type="submit" value="🗑️ Delete" class="delete-btn" onclick="return confirm('Delete {{ file }}?')">
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
     {% else %}
-    <p><em>No video files found.</em></p>
+      <p><em>No video files found.</em></p>
     {% endif %}
   </div>
 
@@ -240,20 +245,51 @@
   <div class="section">
     <h2>🖼️ Current Slide Preview</h2>
     {% if slide_image %}
-    <p><strong>Current Slide:</strong> {{ slide_image }}</p>
-    <img src="/files/slide/{{ slide_image }}"
-      style="max-width:100%; border:1px solid #ccc; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+      <p><strong>Current Slide:</strong> {{ slide_image }}</p>
+      <img src="/files/slide/{{ slide_image }}" style="max-width:100%; border:1px solid #ccc; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
     {% else %}
-    <p><em>No slide image found. Upload a PPTX file to generate slides.</em></p>
+      <p><em>No slide image found. Upload a PPTX file to generate slides.</em></p>
     {% endif %}
   </div>
 
   <!-- Output Messages -->
   {% if output %}
-  <div class="section output">
-    <strong>📋 System Output:</strong><br>{{ output }}
-  </div>
+    <div class="section output">
+      <strong>📋 System Output:</strong><br>{{ output }}
+    </div>
   {% endif %}
-</body>
 
+  <!-- Shutdown & Reboot Raspberry -->
+  <div class="section warning-section">
+    <h2>⚠️ Shutdown & Reboot Raspberry Pi</h2>
+    
+    {% if role == 'admin' %}
+      <div class="system-buttons">
+        <form method="post" style="display: inline;">
+          <button type="submit" name="action" value="reboot" class="reboot-btn" 
+                  onclick="return confirm('⚠️ Are you sure you want to REBOOT the Raspberry Pi? This will restart the system.')">
+            🔄 Reboot Raspberry Pi
+          </button>
+          <button type="submit" name="action" value="shutdown" class="shutdown-btn"
+                  onclick="return confirm('🚨 DANGER! Are you absolutely sure you want to SHUTDOWN the Raspberry Pi? The system will turn off completely and you will need to manually power it back on.')">
+            ⭕ Shutdown Raspberry Pi
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div class="admin-only">
+        🔒 <strong>Admin privileges required for system power operations</strong>
+        <p style="margin: 5px 0 0 0; font-size: 14px;">
+          Only users with admin role can perform shutdown and reboot operations.
+        </p>
+      </div>
+    {% endif %}
+    
+    <p style="text-align: center; margin-top: 15px; font-size: 14px;">
+      <strong>Warning:</strong> These actions will affect the entire system. Use with caution!
+    </p>
+  </div>
+
+</body>
 </html>
+
