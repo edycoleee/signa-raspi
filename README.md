@@ -181,7 +181,7 @@ fi
 #========================================================#
 #Supaya bisa di eksekusi
 sudo chmod +x /home/sultan/signage/executor/signage_auto.sh
-sudo bash /home/sultan/signage/executor/signage_auto.sh
+bash /home/sultan/signage/executor/signage_auto.sh
 
 ```
 
