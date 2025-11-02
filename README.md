@@ -15,6 +15,13 @@ git push -u origin main
 ssh-keygen -R 192.168.171.138
 # koneksi ssh
 ssh sultan@192.168.171.138
+
+#Update upgrade
+sudo apt update && sudo apt upgrade -y
+#memeriksa penggunaan memori (RAM) 
+free -h
+#membaca sensor suhu langsung
+vcgencmd measure_temp
 #INSTALL LIBRARY
 sudo apt install mpv -y
 sudo apt install unclutter -y
