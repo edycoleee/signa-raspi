@@ -228,6 +228,14 @@ sudo systemctl restart signage-auto.service
 ```
 
 ### FLASK - DASAR
+```git
+git branch 01_flask_dasar         # Membuat branch baru
+git checkout 01_flask_dasar        # Berpindah ke branch tersebut
+# (lakukan perubahan pada file sesuai kebutuhan)
+git add .                       # Menambahkan semua perubahan ke staging area
+git commit -m "finish"          # Commit dengan pesan "finish"
+git push -u origin 01_flask_dasar  # Push ke remote dan set tracking branch
+```
 
 ### FLASK - CONTROL
 
