@@ -1,9 +1,21 @@
-#sudo nano /home/sultan/signage/control/signage_control.py
-
 from flask import Flask, render_template, request, send_from_directory
 import subprocess
 import os
 import json
+import sys
+
+# =============================
+# KONFIGURASI PATH IMPORT
+# =============================
+# Dapatkan path ke root directory proyek
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)  # Satu level naik ke signage_control_panel/
+
+# Tambahkan project_root ke path Python
+sys.path.append(project_root)
+
+# Sekarang import logger
+from utils.logger import log
 
 app = Flask(__name__)
 
@@ -14,6 +26,12 @@ app.config['UPLOAD_FOLDER_PPTX'] = '/home/sultan/signage/media'
 app.config['UPLOAD_FOLDER_VIDEO'] = '/home/sultan/signage/media/video'
 app.config['SLIDE_OUTPUT'] = '/home/sultan/signage/media/slide_output'
 app.config['MODE_FILE'] = '/home/sultan/signage/config/config.json'
+
+# =============================
+# KONFIGURASI TEMPLATE FOLDER
+# =============================
+# Atur template folder ke direktori templates di root
+app.template_folder = os.path.join(project_root, 'templates')
 
 # =============================
 # FUNGSI UTILITAS
@@ -36,18 +54,18 @@ def load_config():
         # Coba baca file konfigurasi
         with open(app.config['MODE_FILE'], "r") as f:
             config = json.load(f)
-            print(f"✅ Config loaded: {config}")
+            log("CONFIG", f"Config loaded: {config}")
             return config
     except FileNotFoundError:
         # Jika file tidak ada, buat direktori dan file default
-        print("⚠️  Config file not found, creating default...")
+        log("CONFIG", "Config file not found, creating default configuration")
         os.makedirs(os.path.dirname(app.config['MODE_FILE']), exist_ok=True)
         with open(app.config['MODE_FILE'], "w") as f:
             json.dump(default_config, f, indent=2)
         return default_config
     except Exception as e:
         # Handle error lainnya
-        print(f"❌ Error loading config: {e}")
+        log("ERROR", f"Error loading config: {e}")
         return default_config
 
 def save_config(config):
@@ -60,9 +78,9 @@ def save_config(config):
     try:
         with open(app.config['MODE_FILE'], "w") as f:
             json.dump(config, f, indent=2)
-        print(f"✅ Config saved: {config}")
+        log("CONFIG", f"Config saved: {config}")
     except Exception as e:
-        print(f"❌ Error saving config: {e}")
+        log("ERROR", f"Error saving config: {e}")
 
 def ensure_directories():
     """
@@ -77,7 +95,7 @@ def ensure_directories():
     
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
-        print(f"✅ Directory ensured: {directory}")
+        log("SYSTEM", f"Directory ensured: {directory}")
 
 # =============================
 # ROUTE UTAMA
@@ -120,36 +138,43 @@ def control_panel():
             
             # 🔍 Get Service Status
             if action == "status":
+                log("ACTION", "User requested service status")
                 output = subprocess.check_output(
                     ["/usr/bin/systemctl", "status", "signage-auto.service"], 
                     stderr=subprocess.STDOUT
                 ).decode()
+                log("SYSTEM", "Service status retrieved successfully")
             
             # 🎞️ Set Video Mode
             elif action == "video":
                 config["mode"] = "video"
                 save_config(config)
                 output = "✅ Mode changed to: VIDEO"
+                log("MODE", "Switched to VIDEO mode")
             
             # 🖼️ Set Slide Mode
             elif action == "slide":
                 config["mode"] = "slide"
                 save_config(config)
                 output = "✅ Mode changed to: SLIDE"
+                log("MODE", "Switched to SLIDE mode")
             
             # 🌐 Set Web Mode
             elif action == "web":
                 config["mode"] = "web"
                 save_config(config)
                 output = "✅ Mode changed to: WEB"
+                log("MODE", "Switched to WEB mode")
             
             # 🔁 Restart Service
             elif action == "restart":
+                log("ACTION", "User requested service restart")
                 subprocess.run(
                     ["/usr/bin/sudo", "/usr/bin/systemctl", "restart", "signage-auto.service"], 
                     check=True
                 )
                 output = "✅ Service restarted successfully"
+                log("SYSTEM", "Service restarted successfully")
             
             # 📤 Upload Files
             elif "upload" in request.form:
@@ -160,8 +185,10 @@ def control_panel():
                         filepath = os.path.join(app.config['UPLOAD_FOLDER_PPTX'], "slide.pptx")
                         file.save(filepath)
                         output = f"✅ Slide uploaded: {file.filename}"
+                        log("UPLOAD", f"PPTX file uploaded: {file.filename}")
                     else:
                         output = "❌ Error: Only .pptx files are allowed"
+                        log("ERROR", f"Invalid file type attempted: {file.filename}")
                 
                 # Upload Video File
                 elif "video_file" in request.files and request.files["video_file"].filename:
@@ -170,8 +197,10 @@ def control_panel():
                         filepath = os.path.join(app.config['UPLOAD_FOLDER_VIDEO'], file.filename)
                         file.save(filepath)
                         output = f"✅ Video uploaded: {file.filename}"
+                        log("UPLOAD", f"Video file uploaded: {file.filename}")
                     else:
-                        output = "❌ Error: Only video files (MP4, AVI, MOV, MKV) are allowed"
+                        output = "❌ Error: Only video files (MP4, AVI, MOV, MKV) and images (JPG, JPEG) are allowed"
+                        log("ERROR", f"Invalid file type attempted: {file.filename}")
             
             # 🗑️ Delete Video File
             elif "delete_video" in request.form:
@@ -180,27 +209,37 @@ def control_panel():
                 if os.path.exists(filepath):
                     os.remove(filepath)
                     output = f"✅ Video deleted: {filename}"
+                    log("DELETE", f"File deleted: {filename}")
                 else:
                     output = f"❌ File not found: {filename}"
+                    log("ERROR", f"File not found for deletion: {filename}")
             
             # 🔧 Update Web URL
             elif "update_web_url" in request.form:
                 new_url = request.form.get("new_web_url", "").strip()
                 if new_url and new_url.startswith(('http://', 'https://')):
+                    old_url = config["web_url"]
                     config["web_url"] = new_url
                     save_config(config)
                     output = f"✅ Web URL updated to: {new_url}"
+                    log("CONFIG", f"Web URL changed from {old_url} to {new_url}")
                 else:
                     output = "❌ Error: Please enter a valid URL starting with http:// or https://"
+                    log("ERROR", f"Invalid URL entered: {new_url}")
         
         except subprocess.CalledProcessError as e:
             output = f"❌ Command error: {str(e)}"
+            log("ERROR", f"Subprocess command failed: {str(e)}")
         except Exception as e:
             output = f"❌ Unexpected error: {str(e)}"
+            log("ERROR", f"Unexpected error: {str(e)}")
+    
+    # Log akses ke halaman
+    log("ACCESS", "Control panel accessed")
     
     # Render template dengan data yang diperlukan
     return render_template(
-        "control.html",  # Menggunakan file template terpisah
+        "control.html",
         output=output,
         video_files=video_files,
         slide_image=slide_image,
@@ -222,6 +261,7 @@ def serve_video(filename):
     Returns:
         Response: File video
     """
+    log("ACCESS", f"Video file served: {filename}")
     return send_from_directory(app.config['UPLOAD_FOLDER_VIDEO'], filename)
 
 @app.route("/files/slide/<path:filename>")
@@ -235,6 +275,7 @@ def serve_slide(filename):
     Returns:
         Response: File gambar slide
     """
+    log("ACCESS", f"Slide file served: {filename}")
     return send_from_directory(app.config['SLIDE_OUTPUT'], filename)
 
 # =============================
@@ -243,10 +284,12 @@ def serve_slide(filename):
 
 @app.errorhandler(404)
 def not_found(error):
+    log("ERROR", f"404 Page not found: {request.url}")
     return "❌ Page not found", 404
 
 @app.errorhandler(500)
 def internal_error(error):
+    log("ERROR", f"500 Internal server error: {str(error)}")
     return "❌ Internal server error", 500
 
 # =============================
@@ -255,14 +298,19 @@ def internal_error(error):
 
 if __name__ == "__main__":
     print("🚀 Starting Signage Control Panel...")
+    log("SYSTEM", "Signage Control Panel starting up")
+    
+    print("📁 Project structure:")
+    print(f"   - Current directory: {current_dir}")
+    print(f"   - Project root: {project_root}")
+    print(f"   - Template folder: {app.template_folder}")
+    
     print("📁 Config paths:")
     print(f"   - PPTX Upload: {app.config['UPLOAD_FOLDER_PPTX']}")
     print(f"   - Video Upload: {app.config['UPLOAD_FOLDER_VIDEO']}")
     print(f"   - Slide Output: {app.config['SLIDE_OUTPUT']}")
     print(f"   - Config File: {app.config['MODE_FILE']}")
-    
-    # Pastikan direktori template ada
-    os.makedirs('templates', exist_ok=True)
+    print(f"   - Log File: /home/sultan/signage/logs/signage.log")
     
     # Pastikan direktori ada saat startup
     ensure_directories()
@@ -273,4 +321,7 @@ if __name__ == "__main__":
     
     # Jalankan aplikasi
     print("🌐 Server running on http://0.0.0.0:5000")
+    log("SYSTEM", "Flask application started on http://0.0.0.0:5000")
+    
     app.run(host="0.0.0.0", port=5000, debug=True)
+

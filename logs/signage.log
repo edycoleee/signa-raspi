@@ -1,0 +1,101 @@
+test[2025-11-01 21:54:27] SYSTEM: Signage Control Panel starting up
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 21:54:27] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 21:54:27] SYSTEM: Flask application started on http://0.0.0.0:5000
+[2025-11-01 21:54:27] SYSTEM: Signage Control Panel starting up
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 21:54:27] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 21:54:27] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 21:54:27] SYSTEM: Flask application started on http://0.0.0.0:5000
+[2025-11-01 21:54:36] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 21:54:36] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 21:54:36] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 21:54:36] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 21:54:36] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 21:54:36] ACTION: User requested service restart
+[2025-11-01 21:54:36] SYSTEM: Service restarted successfully
+[2025-11-01 21:54:36] ACCESS: Control panel accessed
+[2025-11-01 21:54:36] ACCESS: Slide file served: slide.png
+[2025-11-01 22:00:49] SYSTEM: Signage Control Panel starting up
+[2025-11-01 22:00:49] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:00:49] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:00:49] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:00:49] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:00:49] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:00:49] SYSTEM: Flask application started on http://0.0.0.0:5000
+[2025-11-01 22:00:50] SYSTEM: Signage Control Panel starting up
+[2025-11-01 22:00:50] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:00:50] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:00:50] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:00:50] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:00:50] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:00:50] SYSTEM: Flask application started on http://0.0.0.0:5000
+[2025-11-01 22:01:01] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:01:01] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:01:01] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:01:01] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:01:01] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:01:01] ACTION: User requested service restart
+[2025-11-01 22:01:01] SYSTEM: Service restarted successfully
+[2025-11-01 22:01:01] ACCESS: Control panel accessed
+[2025-11-01 22:01:01] ACCESS: Slide file served: slide.png
+[2025-11-01 22:01:05] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:01:05] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:01:05] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:01:05] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:01:05] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:01:05] CONFIG: Config saved: {'mode': 'slide', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:01:05] MODE: Switched to SLIDE mode
+[2025-11-01 22:01:05] ACCESS: Control panel accessed
+[2025-11-01 22:01:06] ACCESS: Slide file served: slide.png
+[2025-11-01 22:01:10] CONFIG: Config loaded: {'mode': 'slide', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:01:10] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:01:10] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:01:10] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:01:10] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:01:10] ACTION: User requested service restart
+[2025-11-01 22:01:14] SYSTEM: Service restarted successfully
+[2025-11-01 22:01:14] ACCESS: Control panel accessed
+[2025-11-01 22:01:14] ACCESS: Slide file served: slide.png
+[2025-11-01 22:01:14] ERROR: 404 Page not found: http://192.168.30.29:5000/files/slide/slide.png
+[2025-11-01 22:04:05] CONFIG: Config loaded: {'mode': 'slide', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:04:05] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:04:05] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:04:05] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:04:05] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:04:05] CONFIG: Config saved: {'mode': 'video', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:04:05] MODE: Switched to VIDEO mode
+[2025-11-01 22:04:05] ACCESS: Control panel accessed
+[2025-11-01 22:04:05] ACCESS: Slide file served: slide.png
+[2025-11-01 22:04:06] CONFIG: Config loaded: {'mode': 'video', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:04:06] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:04:06] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:04:06] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:04:06] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:04:06] ACTION: User requested service restart
+[2025-11-01 22:04:06] SYSTEM: Service restarted successfully
+[2025-11-01 22:04:06] ACCESS: Control panel accessed
+[2025-11-01 22:04:07] ACCESS: Slide file served: slide.png
+[2025-11-01 22:04:54] CONFIG: Config loaded: {'mode': 'video', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:04:54] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:04:54] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:04:54] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:04:54] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:04:54] CONFIG: Config saved: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:04:54] MODE: Switched to WEB mode
+[2025-11-01 22:04:54] ACCESS: Control panel accessed
+[2025-11-01 22:04:54] ACCESS: Slide file served: slide.png
+[2025-11-01 22:04:55] CONFIG: Config loaded: {'mode': 'web', 'web_url': 'https://daftar.rsudsulfat.id/admin/bed_kosong/tv'}
+[2025-11-01 22:04:55] SYSTEM: Directory ensured: /home/sultan/signage/media
+[2025-11-01 22:04:55] SYSTEM: Directory ensured: /home/sultan/signage/media/video
+[2025-11-01 22:04:55] SYSTEM: Directory ensured: /home/sultan/signage/media/slide_output
+[2025-11-01 22:04:55] SYSTEM: Directory ensured: /home/sultan/signage/config
+[2025-11-01 22:04:55] ACTION: User requested service restart
+[2025-11-01 22:04:55] SYSTEM: Service restarted successfully
+[2025-11-01 22:04:55] ACCESS: Control panel accessed
+[2025-11-01 22:04:55] ACCESS: Slide file served: slide.png

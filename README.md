@@ -311,6 +311,51 @@ git push -u origin 02_flask_control  # Push ke remote dan set tracking branch
 ```html
 <!-- nano /home/sultan/signage/control.templates/control.html -->
 ```
-### FLASK - CONTROL - SHUTDOWN
+### FLASK - CONTROL - LOGGER
+```git
+git branch 03_flask_logger        # Membuat branch baru
+git checkout 03_flask_logger        # Berpindah ke branch tersebut
+# (lakukan perubahan pada file sesuai kebutuhan)
+git add .                       # Menambahkan semua perubahan ke staging area
+git commit -m "finish"          # Commit dengan pesan "finish"
+git push -u origin 03_flask_logger  # Push ke remote dan set tracking branch
+```
+```py
+#📁 /home/sultan/signage/utils/logger.py
+import os
+import datetime
+
+LOG_DIR = "/home/sultan/signage/logs"
+LOG_PATH = os.path.join(LOG_DIR, "signage.log")
+
+# Pastikan folder log ada
+os.makedirs(LOG_DIR, exist_ok=True)
+
+def log(action, message):
+    """Catat event ke signage.log"""
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    line = f"[{timestamp}] {action.upper()}: {message}\n"
+    with open(LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(line)
+
+#========================================================#
+# 🔍 Cara Melihat Log:
+# Lihat log real-time
+tail -f /home/sultan/signage/logs/signage.log
+
+# Lihat seluruh log
+cat /home/sultan/signage/logs/signage.log
+
+# Cari error saja
+grep "ERROR" /home/sultan/signage/logs/signage.log
+```
+```py
+#sudo nano /home/sultan/signage/control/signage_control.py
+```
+```text
+<!-- nano /home/sultan/signage/control.templates/control.html -->
+File: templates/control.html (Tetap sama)
+File template HTML tetap sama seperti sebelumnya
+```
 
 ### FLASK - CONTROL - SHUTDOWN - USER ROLE
