@@ -236,6 +236,52 @@ git add .                       # Menambahkan semua perubahan ke staging area
 git commit -m "finish"          # Commit dengan pesan "finish"
 git push -u origin 01_flask_dasar  # Push ke remote dan set tracking branch
 ```
+```py
+# login dg ssh
+sultan@raspberrypi:~ $ cd signage
+sultan@raspberrypi:~/signage $
+
+#1. Pastikan python3-full dan venv tersedia
+sudo apt install python3-full python3-venv
+
+#2. Buat virtual environment
+python3 -m venv signage-venv
+
+#3. Aktifkan virtual environment
+source signage-venv/bin/activate
+#Setelah aktif, prompt kamu akan berubah jadi:
+(signage-venv) sultan@raspberrypi:~/signage $
+
+#4. Install Flask di dalam venv
+pip install flask
+
+#5. Jalankan Flask app
+nano /home/sultan/signage/control/flask_coba.py
+python /home/sultan/signage/control/flask_coba.py
+
+#========================================================#
+#/home/sultan/signage/control/flask_coba.py
+### untuk mencoba buat script sederhana :
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello World dari Raspberry Pi 5!'
+
+@app.route('/info')
+def info():
+    return 'Ini adalah halaman info'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+#========================================================#
+
+# melihat IP raspberry
+hostname -I
+```
+
 
 ### FLASK - CONTROL
 
