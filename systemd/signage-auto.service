@@ -1,0 +1,12 @@
+[Unit] 
+Description=Signage Auto Mode (triggered by mode.txt) 
+After=graphical.target 
+
+[Service] 
+User=sultan 
+Environment=DISPLAY=:0 
+ExecStart=/home/sultan/signage/executor/signage_auto.sh 
+Restart=always 
+
+[Install] 
+WantedBy=graphical.target 
