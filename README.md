@@ -311,6 +311,49 @@ git push -u origin 02_flask_control  # Push ke remote dan set tracking branch
 ```html
 <!-- nano /home/sultan/signage/control.templates/control.html -->
 ```
+```py
+#2. Buat File Service systemd====== UPDATE SEBELUMNYA
+nano /home/sultan/signage/systemd/signage-flask.service
+
+Isi dengan:
+#========================================================#
+[Unit]
+Description=Flask Web Server for Signage Control
+After=network.target
+
+[Service]
+User=sultan
+WorkingDirectory=/home/sultan/signage/control
+Environment="PATH=/home/sultan/signage/signage-venv/bin"
+ExecStart=/home/sultan/signage/signage-venv/bin/python signage_control.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+#========================================================#
+#3. Aktifkan dan Jalankan Service
+
+sudo cp /home/sultan/signage/systemd/signage-flask.service /etc/systemd/system/
+#Melihat isi nya : nano /etc/systemd/system/signage-flask.service
+
+sudo systemctl daemon-reexec
+sudo systemctl enable signage-flask.service
+sudo systemctl start signage-flask.service
+sudo systemctl restart signage-flask.service
+
+#Cek status:
+
+sudo systemctl status signage-flask.service
+#4. Akses Web Server
+•	Di Raspberry Pi: http://localhost:5000
+•	Dari jaringan lain: http://<IP-RASPBERRY>:5000
+#Tips Debugging
+#Jika ada error:
+journalctl -u signage-flask.service -e
+
+```
+
+
 ### FLASK - CONTROL - LOGGER
 ```git
 git branch 03_flask_logger        # Membuat branch baru
