@@ -312,6 +312,9 @@ git push -u origin 02_flask_control  # Push ke remote dan set tracking branch
 <!-- nano /home/sultan/signage/control.templates/control.html -->
 ```
 ```py
+#1. untuk menjalankan 
+sudo python3 /home/sultan/signage/control/signage_control.py
+
 #2. Buat File Service systemd====== UPDATE SEBELUMNYA
 nano /home/sultan/signage/systemd/signage-flask.service
 
