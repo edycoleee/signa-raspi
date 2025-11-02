@@ -441,7 +441,8 @@ nano /home/sultan/signage/config/users.json
 
 ### CATATAN
 ```git
-git clone -b 04_flask_user https://github.com/edycoleee/signa-raspi.git signage
+# melihat IP raspberry
+hostname -I
 
 #PELAJARAN TENTANG KEPEMILIKAN FILE
 #user file >> sudo file
@@ -465,4 +466,41 @@ sudo chown sultan:sultan /home/sultan/my_script.sh
 #•	sultan:sultan: 
 #Mengatur pemilik (sultan) dan grup (sultan) kembali ke nama pengguna Anda. 
 #Sesuaikan sultan jika nama pengguna Anda berbeda.
+```
+
+### CARA CLONE
+```py
+#1. Clone dari github repo
+git clone -b 04_flask_user https://github.com/edycoleee/signa-raspi.git signage
+#2. jadikan file signage_auto.sh bisa di eksekusi
+sudo chmod +x /home/sultan/signage/executor/signage_auto.sh
+#3. cek apakah player bisa jalan sesuai 
+bash /home/sultan/signage/executor/signage_auto.sh
+# Ctrl + c untuk menghentikan 
+#4. Copykan signage-auto.service ke system
+sudo cp /home/sultan/signage/systemd/signage-auto.service /etc/systemd/system/
+#5. Aktifkan signage-auto.service
+sudo systemctl daemon-reexec
+sudo systemctl enable signage-auto.service
+sudo systemctl start signage-auto.service
+#6. cek apakah sistem run
+sudo systemctl status signage-auto.service 
+#status run >> lanjutkan
+#7. cek untuk menjalankan signage_control.py
+sudo python3 /home/sultan/signage/control/signage_control.py
+#8. Copykan signage-flask.service ke system
+sudo cp /home/sultan/signage/systemd/signage-flask.service /etc/systemd/system/
+#Melihat isi nya : nano /etc/systemd/system/signage-flask.service
+#9. Aktifkan signage-flask.service
+sudo systemctl daemon-reexec
+sudo systemctl enable signage-flask.service
+sudo systemctl start signage-flask.service
+#10. Cek status signage-flask.service
+sudo systemctl status signage-flask.service
+#status run >> lanjutkan
+#11. Akses Web Server
+•	Di Raspberry Pi: http://localhost:5000
+•	Dari jaringan lain: http://<IP-RASPBERRY>:5000
+#user : admin pass: admin >> admin
+#user : user pass: user >> user
 ```
