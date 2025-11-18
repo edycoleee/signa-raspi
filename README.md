@@ -479,6 +479,15 @@ sudo chown sultan:sultan /home/sultan/my_script.sh
 ```py
 #1. Clone dari github repo
 git clone -b 04_flask_user https://github.com/edycoleee/signa-raspi.git signage
+# membuat env
+# Pastikan python3-full dan venv tersedia
+sudo apt install python3-full python3-venv
+# Buat virtual environment
+python3 -m venv signage-venv
+# Aktifkan virtual environment
+source signage-venv/bin/activate
+#Setelah aktif, prompt kamu akan berubah jadi:
+(signage-venv) sultan@raspberrypi:~/signage $
 #2. jadikan file signage_auto.sh bisa di eksekusi
 sudo chmod +x /home/sultan/signage/executor/signage_auto.sh
 #3. cek apakah player bisa jalan sesuai 
@@ -510,4 +519,24 @@ sudo systemctl status signage-flask.service
 •	Dari jaringan lain: http://<IP-RASPBERRY>:5000
 #user : admin pass: admin >> admin
 #user : user pass: user >> user
+```
+
+### UBUNTU ADMIN
+
+```py
+# masuk SSH
+ssh sultan@192.168.171.209
+ifconfig
+sudo nmtui
+
+
+# Identifikasi Raspberry 
+echo "=== Raspberry Pi Information ==="
+cat /proc/device-tree/model
+echo -e "\n=== CPU Info ==="
+cat /proc/cpuinfo | grep -E "model name|Hardware|Revision"
+echo -e "\n=== Memory ==="
+free -h
+echo -e "\n=== Architecture ==="
+uname -m
 ```
